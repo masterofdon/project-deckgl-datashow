@@ -2,10 +2,8 @@
 import React, {Component} from 'react';
 import {render} from 'react-dom';
 import MapGL from 'react-map-gl';
-import DeckGLOverlay from './deckgl-overlay.js';
-import RoadQualityOverlay from './RoadQualityOverlay.js'
-import SO2LevelOverlay from './so2-levels-overlay.js'
-import TopLeftIconButton from './components/TopLeftIconButton.js'
+import GeoJsonMapContainer from './components/GeoJsonMapContainer';
+import GeoJsonInfoBox from './components/GeoJsonInfoBox';
 import {json as requestJson} from 'd3-request';
 import {csv as requestCsv} from 'd3-request';
 import {request as Request} from 'd3-request'
@@ -28,7 +26,8 @@ const FINAL_POINTS = "final_points.csv";
 const DATA_ROAD_QUALITY = "final_points.csv";
 const DATA_GEOJSON = "data.geojson";
 const DATA_GRID = "https://217.78.97.241:30000/api/1.0/search";
-const PARAMS_GRID = '{"size": 190347,"query": {"match":{"deviceId": "BarcelonaGrid"}},"_source":{"includes":["data"],"excludes":[]}}'
+const PARAMS_GRID = '{"size": 190347,"query": {"match":{"deviceId": "BarcelonaGrid"}},"_source":{"includes":["data"],"excludes":[]}}';
+const AUTH_TOKEN = 'Bearer e9f8de1f-e90d-41aa-a628-bc983c4136f1';
 var PARAMS2_GRID = {};
 PARAMS2_GRID.size = 190347;
 PARAMS2_GRID.query = {};
@@ -136,100 +135,13 @@ class Root extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      viewport: {
-        ...SO2LevelOverlay.defaultViewport,
-        width: 200,
-        height: 200
-      },
-      
-      data: null,
-      type : "geojson2",
-      selected : "false",
-      hovered : "false",
+      maptype : "geojson",
       onClickHandler : this.props.onClick
     };
     startZoomInAnimationTimer : null;
     var app_width = window.innerWidth * 0.99;
     var app_height = window.innerHeight * 0.75;
-
-    if(this.state.type === "screengird"){
-      requestJson(DATA_URL, (error, response) => {
-        //console.log(response);
-        if (!error) {
-          this.setState({data: response});
-        }
-      });
-    } else if(this.state.type === "hexagon"){
-      requestCsv(FINAL_POINTS, (error, response) => {
-        //console.log(response);
-        if (!error) {
-          const data = response.map(d => ([Number(d.lng), Number(d.lat)]));
-          this.setState({data});
-        }
-      });
-    } else if(this.state.type === 'geojson'){
-      requestJson(DATA_GEOJSON,(error,response) => {
-        //console.log("Feat\r\n" + response);
-        if (!error) {
-          var len = (response.features != null && response.features != 'undefined') ? response.features.length : 0;
-          for(var i = 0;i < len;i++){
-            response.features[i].properties.growth = getRandomDouble(0,100);
-            response.features[i].properties.selected = false;
-            response.features[i].properties.hovered = false;
-          }
-          this.setState({data: response});
-        }
-      });
-    } else if(this.state.type === 'geojson2'){
-      Request(DATA_GRID)
-        .header("Content-Type", "application/json")
-        .header('Authorization', 'Bearer f4b2e853-0d6f-4413-b583-a243e1060a81')
-        .post(JSON.stringify(PARAMS_GEOJSON),function(error,data){
-          var jsonParsed = JSON.parse(data.response);
-          var resultset = jsonParsed._embedded.result;
-          var features = [];
-          for(var i = 0; i < resultset.length;i++){
-            features.push(resultset[i].data)
-          }
-          var object = {};
-          object.features = features;
-          var last = JSON.parse(JSON.stringify(object))
-          this.setState({data : last});
-      });
-    } else if(this.state.type === 'hexagon2'){
-      Request(DATA_GRID)
-        .header("Content-Type", "application/json")
-        .header('Authorization', 'Bearer f4b2e853-0d6f-4413-b583-a243e1060a81')
-        .post(JSON.stringify(PARAMS_HEXAGON),function(error,data){
-          var jsonParsed = JSON.parse(data.response);
-          var resultset = jsonParsed._embedded.result;
-          var features = [];
-          for(var i = 0; i < resultset.length;i++){
-            features.push(resultset[i].data)
-          }
-          var object = {};
-          object.features = features;
-          var last = JSON.parse(JSON.stringify(object))
-          this.setState({data : last});
-      });
-    } else if(this.state.type === 'screengrid2'){
-      Request(DATA_GRID)
-        .header("Content-Type", "application/json")
-        .header('Authorization', 'Bearer f4b2e853-0d6f-4413-b583-a243e1060a81')
-        .post(JSON.stringify(PARAMS2_GRID),function(error,data){
-          console.error(error);
-          if (!error) {
-            var len = (response.features != null && response.features != 'undefined') ? response.features.length : 0;
-            for(var i = 0;i < len;i++){
-              response.features[i].properties.growth = getRandomDouble(0,100);
-              response.features[i].properties.selected = false;
-              response.features[i].properties.hovered = false;
-            }
-            this.setState({data: response});
-          }
-            
-      });
-    }
+    
   }
 
   componentDidMount() {
@@ -270,133 +182,35 @@ class Root extends Component {
     });
   }
 
-  _onHover(value){
-    var isInside = false;
-    if(value.object == null) {
-      isInside = false;
-      var index = value.index;
-      if(isNotNull(last_hovered_item)){
-        // Last check. We might have already select an area. If selected outing object should ne change the state.
-        if(isNotNull(currently_selected_item) && value.index == currently_selected_item.index){
-          return;
-        }
-        // Return the outing object to the unselected state.        
-        this.state.data.features[last_hovered_item.index].properties.hovered = false;
-        last_hovered_item = null;
-      }
-      else{
-        //This is not the case. If we have a null [value.object] we MUST have [last_hovered_item].
-        throw new Error();
-      }
-      
-    } else {
-      if(isNotNull(last_hovered_item) && isNotNull(last_hovered_item.properties)){
-        if(last_hovered_item.properties.name === value.object.properties.name) { 
-          // We are still in the same polygon. Do nothing.
-          return;
-        }
-        else {
-          this.state.data.features[last_hovered_item.index].properties.hovered = false;
-        } 
-      }
-      isInside = true;
-      last_hovered_item = value.object;
-      last_hovered_item.index = value.index;
-      this.state.data.features[value.index].properties.hovered = true
-    }
-    var xData = JSON.parse(JSON.stringify(this.state.data));
-    this.setState({ data : xData , hovered : isInside });
+  objectSelected(){
+
   }
 
-  _onClick(value){
-    if(value.object == null) {
-      // Something wrong.
-      return true;
-    }
-
-    if(currently_selected_item == null){
-      // There exists no selection. This is gonna be it.
-    }
-    else {
-      // Selection already exists. Check if the selection is the same
-      if(currently_selected_item.index == value.index){
-        // Do nothing
-        return true;
-      }
-      this.state.data.features[currently_selected_item.index].properties.selected = false; 
-      
-    }
-    currently_selected_item = value.object;
-    currently_selected_item.index = value.index;
-    this.state.data.features[currently_selected_item.index].properties.selected = true;
-    var xData = JSON.parse(JSON.stringify(this.state.data));
-    this.setState({ data : xData , selected : true });
-    this._zoomInToArea(value.lngLat,13);
-    return true;
+  _onGeoJsonItemSelected(selectedItem){
+    console.log("Item Selected");
+    this.setState({
+      selectedGeoJsonItem : selectedItem
+    });
   }
   
   render() {
-    const {viewport, data} = this.state;
-    const containerStyle = {
-      marginTop : "20px",
-      marginLeft: "10px"
+    const {selectedGeoJsonItem} = this.state;
+    if(this.state.maptype === "screengrid"){
+      <ScreenGridMapContainer />
     }
-    const canvasStyle = {
-      width : "300px"
-    }
-    //console.log('Incoming:' + this.state.type);
-    if(this.state.type === "screengrid" || this.state.type === 'screengrid2'){
+    else if(this.state.maptype === "hexagon"){
       return(
-        <div class="row" style={containerStyle}>
-          <MapGL
-            {...viewport}
-            mapStyle="mapbox://styles/mapbox/basic-v9"
-            onViewportChange={this._onViewportChange.bind(this)}
-            mapboxApiAccessToken={MAPBOX_TOKEN}>
-            <DeckGLOverlay viewport={viewport}
-              data={data}
-              cellSize={20}
-              />
-          </MapGL>
+        <HexagonMapContainer />
+      );
+    }
+    else if(this.state.maptype === 'geojson'){
+      return (
+        <div>
+          {selectedGeoJsonItem  && <GeoJsonInfoBox selecteditem={selectedGeoJsonItem} name={selectedGeoJsonItem.name} />}
+          <GeoJsonMapContainer onItemSelected={this._onGeoJsonItemSelected.bind(this)}/>
         </div>
       );
     }
-    else if(this.state.type === "hexagon" || this.state.type === 'hexagon2'){
-      return(
-        <div class="row" style={containerStyle}>
-          <MapGL
-            {...viewport}
-            mapStyle="mapbox://styles/mapbox/dark-v9"
-            onViewportChange={this._onViewportChange.bind(this)}
-            mapboxApiAccessToken={MAPBOX_TOKEN}>
-            <RoadQualityOverlay
-              viewport={viewport}
-              data={data || []}
-            />
-          </MapGL>
-        </div>
-      );
-    }
-    return (
-      <div class="row" style={containerStyle}>
-        <MapGL
-          {...viewport}
-          mapStyle="mapbox://styles/aerdemekin/cj9h78aws1tox2rrstvt8luje"
-          onViewportChange={this._onViewportChange.bind(this)}
-          mapboxApiAccessToken={MAPBOX_TOKEN}
-          >          
-          <SO2LevelOverlay viewport={viewport}
-            data={data}
-            colorScale={colorScale2}
-            elevation={elevation}
-            onHover={this._onHover.bind(this)}
-            onClick={this._onClick.bind(this)}            
-            hovered={this.state.hovered}
-            selected={this.state.selected}
-          />
-        </MapGL>
-      </div>
-    );
   }
 }
 render(<Root/>, document.body.appendChild(document.createElement('div')));

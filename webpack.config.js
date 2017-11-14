@@ -7,12 +7,12 @@ const webpack = require('webpack');
 
 const CONFIG = {
   entry: {
-    app: resolve('./app3.js')
+    app: resolve('./app.js')
   },
   devtool: 'source-map',
   output: {
     path: resolve(__dirname, "./"),
-    publicPath: "http://localhost:3030/map3/",
+    publicPath: "http://localhost:3030",
     filename: "bundle.js"
   },
   module: {
