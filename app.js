@@ -11,11 +11,12 @@ import {geoContains as GeoContains} from 'd3-geo';
 import {interpolateZoom as zoom} from 'd3-interpolate';
 import {interpolateArray as arrayInterpolate} from 'd3-interpolate';
 import {interpolateNumber as numberInterpolate} from 'd3-interpolate';
+import MapTypeController from './components/MapTypeController';
 
 var seedrandom = require('seedrandom');
 // Set your mapbox token here
 const MAPBOX_TOKEN = 'pk.eyJ1IjoiYWVyZGVtZWtpbiIsImEiOiJjajhtdGRxb2ExMmE5MnZqczljOXA0MDJhIn0.Fo8sD9jDikhVUu72blwRUA'; // eslint-disable-line
-
+const test = true;
 // Source data CSV
 const DATA_URL = 'istanbul_noise_pollution.json';
 const NOISE_POLLUTION = 'istanbul_noise_pollution.json';
@@ -140,7 +141,7 @@ class Root extends Component {
     };
     startZoomInAnimationTimer : null;
     var app_width = window.innerWidth * 0.99;
-    var app_height = window.innerHeight * 0.75;
+    var app_height = window.innerHeight * 0.90;
     
   }
 
@@ -172,7 +173,7 @@ class Root extends Component {
   _resize() {
     this._onViewportChange({
       width: window.innerWidth * 0.99,
-      height: window.innerHeight * 0.75
+      height: window.innerHeight * 0.90 
     });
   }
 
@@ -182,19 +183,50 @@ class Root extends Component {
     });
   }
 
-  objectSelected(){
-
+  _objectSelected(){
+     
   }
 
   _onGeoJsonItemSelected(selectedItem){
-    console.log("Item Selected");
+    var x = Math.random();
     this.setState({
-      selectedGeoJsonItem : selectedItem
+      selectedGeoJsonItem : selectedItem,
+      loadingState : 'loading',
+      percentage : x
+    });
+    if(test){
+      setTimeout(function(e){
+        this._onGeoJsonItemDataLoaded.bind(this)();
+      }.bind(this),4000);
+    }
+  }
+
+  _onGeoJsonItemUnselected(){
+    this.setState({
+      selectedGeoJsonItem : null,
+      loadingState : 'stopped'
+    });
+  }
+
+  _onGeoJsonItemDataLoaded(){
+    this.setState({
+      loadingState : 'loaded'
+    });
+    setTimeout(function(e){
+      this.setState({
+        loadingState : 'finished'
+      });
+    }.bind(this),4000);
+  }
+
+  changeMapType(maptype){
+    this.setState({
+      maptype: maptype
     });
   }
   
   render() {
-    const {selectedGeoJsonItem} = this.state;
+    const {selectedGeoJsonItem, loadingState, percentage} = this.state;
     if(this.state.maptype === "screengrid"){
       <ScreenGridMapContainer />
     }
@@ -206,11 +238,13 @@ class Root extends Component {
     else if(this.state.maptype === 'geojson'){
       return (
         <div>
-          {selectedGeoJsonItem  && <GeoJsonInfoBox selecteditem={selectedGeoJsonItem} name={selectedGeoJsonItem.name} />}
-          <GeoJsonMapContainer onItemSelected={this._onGeoJsonItemSelected.bind(this)}/>
+          {selectedGeoJsonItem  && <GeoJsonInfoBox selecteditem={selectedGeoJsonItem} name={selectedGeoJsonItem.name} loadingState={loadingState} percentage={percentage}/>}
+          <GeoJsonMapContainer onItemSelected={this._onGeoJsonItemSelected.bind(this)} />
+          <MapTypeController />
         </div>
       );
     }
   }
+  
 }
 render(<Root/>, document.body.appendChild(document.createElement('div')));

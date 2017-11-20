@@ -91,7 +91,7 @@ export default class GeoJsonMapContainer extends Component {
         }
         var object = {};
         object.features = features;
-        var last = JSON.parse(JSON.stringify(object))
+        var last = JSON.parse(JSON.stringify(object));
         //this.setState({ data: last });
         this.setState({data: jsonParsed});
     }
@@ -105,7 +105,7 @@ export default class GeoJsonMapContainer extends Component {
     _resize() {
         this._onViewportChange({
             width: window.innerWidth * 0.99,
-            height: window.innerHeight * 0.75
+            height: window.innerHeight * 0.85
         });
     }
 
@@ -172,6 +172,7 @@ export default class GeoJsonMapContainer extends Component {
         }
         currently_selected_item = value.object;
         currently_selected_item.index = value.index;
+        currently_selected_item.name = value.object.properties.name;
         this.state.data.features[currently_selected_item.index].properties.selected = true;
         var xData = JSON.parse(JSON.stringify(this.state.data));
         this.setState({ data: xData, selected: true });

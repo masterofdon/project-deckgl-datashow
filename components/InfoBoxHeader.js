@@ -6,13 +6,17 @@ export default class InfoBoxHeader extends Component {
         super(props);
         this.state = {
             displaytext : this.props.displaytext
-        }        
+        }
+        this.onHeaderChange = this.props.onHeaderChange;        
     }
 
     render() {
+        var textStyle = {
+            textAlign : "center"
+        }
         return (
-            <div class="col-lg-3 col-md-3 infobox-header-container">
-                <h1 class="infobox-header-text">{this.state.displaytext}</h1>
+            <div className={"row infobox-header-container"}>
+                <h1  style={textStyle} className={"infobox-header-text"}>{this.props.displaytext}</h1>
             </div>
         );
     }

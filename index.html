@@ -11,6 +11,12 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous" />
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Inconsolata|PT+Sans|PT+Sans+Narrow|Raleway:600|Source+Code+Pro|Spectral+SC|Vollkorn|Yantramanav" rel="stylesheet">
+    <link href="/assets/css/sidebar.css" rel="stylesheet" />
+    <link href="/assets/css/map.css" rel="stylesheet" />
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js"></script>
+    <script type="text/javascript" src="https://github.com/nagix/chartjs-plugin-streaming/releases/download/v1.2.0/chartjs-plugin-streaming.min.js"></script>
   </head>
   <body style="background-color: #354555">
     <div>
@@ -19,7 +25,7 @@
           <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
         </button>
         <a class="navbar-brand" href="#" style="height:70px">
-          <img src="isbak_logo.png" width="100" height="40" alt="">
+          <img src="ion.logo.disi-02.png" width="100" height="40" alt="">
         </a>
         
       </nav>
@@ -28,73 +34,18 @@
       <a href="#">About</a>
       <a href="#">Services</a>
     </div>
-	<div class="container">
-		
-	</div>
-	<script type="text/javascript">
-	$(document).ready(function() {
-		$( '.circle' ).each(function() {  
-		console.log("erdem");
-		$(this).progressCircle({
-				nPercent        : 0,
-				showPercentText : true,
-				thickness       : 10,
-				circleSize      : 150
-		});
-	});
-	});
-	</script>
     <script src='bundle.js'></script>
     <style type="text/css">
-      /* The side navigation menu */
-      .sidenav {
-          height: 100%; /* 100% Full-height */
-          width: 0; /* 0 width - change this with JavaScript */
-          position: fixed; /* Stay in place */
-          z-index: 1; /* Stay on top */
-          margin-top: 82px;
-          top: 0;
-          left: 0;
-          background-color: #111; /* Black*/
-          overflow-x: hidden; /* Disable horizontal scroll */
-          padding-top: 60px; /* Place content 60px from the top */
-          transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
-      }
-
-      /* The navigation menu links */
-      .sidenav a {
-          padding: 8px 8px 8px 32px;
-          text-decoration: none;
-          font-size: 25px;
-          color: #818181;
-          display: block;
-          transition: 0.3s
-      }
-
-      /* When you mouse over the navigation links, change their color */
-      .sidenav a:hover, .offcanvas a:focus{
-          color: #f1f1f1;
-      }
-
-      /* Position and style the close button (top right corner) */
-      .sidenav .closebtn {
-          position: absolute;
-          top: 0;
-          right: 25px;
-          font-size: 36px;
-          margin-left: 50px;
-      }
-
       /* Style page content - use this if you want to push the page content to the right when you open the side navigation */
       #main {
           transition: margin-left .5s;
           padding: 20px;
       }
-
-      /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
-      @media screen and (max-height: 450px) {
-          .sidenav {padding-top: 15px;}
-          .sidenav a {font-size: 18px;}
+      #container {
+        margin: 10%;
+        width: 150px;
+        height: 150px;
+        position: relative;
       }
     </style>
     <script type="text/javascript">
@@ -109,11 +60,14 @@
         }
       }
       function openNav() {
-          document.getElementById("mySidenav").style.width = "250px";
+        document.getElementById("mySidenav").style.width = "250px";
       }
       function closeNav() {
         document.getElementById("mySidenav").style.width = "0";
       }
+      
+      
+      
     </script>
   </body>
 </html>

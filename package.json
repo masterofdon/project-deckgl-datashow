@@ -4,12 +4,14 @@
     "start": "webpack-dev-server --progress --hot --port 3030 --open"
   },
   "dependencies": {
+    "chartjs-plugin-streaming": "^1.2.0",
     "d3-geo": "^1.9.0",
     "d3-interpolate": "^1.1.5",
     "d3-request": "^1.0.5",
     "deck.gl": "^4.1.0",
     "jQuery": "^1.7.4",
     "luma.gl": "^4.0.1",
+    "progressbar.js": "^1.0.1",
     "react": "^15.4.1",
     "react-dom": "^15.4.1",
     "react-map-gl": "^3.0.0",
