@@ -3,6 +3,8 @@ import React, {Component} from 'react';
 import {render} from 'react-dom';
 import MapGL from 'react-map-gl';
 import GeoJsonMapContainer from './components/GeoJsonMapContainer';
+import ScreenGridMapContainer from './components/ScreenGridMapContainer';
+import HexagonMapContainer from './components/HexagonMapContainer';
 import GeoJsonInfoBox from './components/GeoJsonInfoBox';
 import {json as requestJson} from 'd3-request';
 import {csv as requestCsv} from 'd3-request';
@@ -12,6 +14,10 @@ import {interpolateZoom as zoom} from 'd3-interpolate';
 import {interpolateArray as arrayInterpolate} from 'd3-interpolate';
 import {interpolateNumber as numberInterpolate} from 'd3-interpolate';
 import MapTypeController from './components/MapTypeController';
+import GeoJsonMapComponent from './components/GeoJsonMapComponent';
+import HexagonMapComponent from './components/HexagonMapComponent';
+import SO2LevelOverlay from './so2-levels-overlay';
+import HeatmapContainer from './components/HeatmapContainer';
 
 var seedrandom = require('seedrandom');
 // Set your mapbox token here
@@ -29,30 +35,6 @@ const DATA_GEOJSON = "data.geojson";
 const DATA_GRID = "https://217.78.97.241:30000/api/1.0/search";
 const PARAMS_GRID = '{"size": 190347,"query": {"match":{"deviceId": "BarcelonaGrid"}},"_source":{"includes":["data"],"excludes":[]}}';
 const AUTH_TOKEN = 'Bearer e9f8de1f-e90d-41aa-a628-bc983c4136f1';
-var PARAMS2_GRID = {};
-PARAMS2_GRID.size = 190347;
-PARAMS2_GRID.query = {};
-PARAMS2_GRID.query.match = {};
-PARAMS2_GRID.query.match.deviceId = "BarcelonaGrid";
-PARAMS2_GRID._source = {};
-PARAMS2_GRID._source.includes = ['data'];
-PARAMS2_GRID._source.excludes = [];
-var PARAMS_GEOJSON = {};
-PARAMS_GEOJSON.size = 10000;
-PARAMS_GEOJSON.query = {};
-PARAMS_GEOJSON.query.match = {};
-PARAMS_GEOJSON.query.match.deviceId = "BarcelonaGeoJson";
-PARAMS_GEOJSON._source = {};
-PARAMS_GEOJSON._source.includes = ['data'];
-PARAMS_GEOJSON._source.excludes = [];
-var PARAMS_HEXAGON = {};
-PARAMS_HEXAGON.size = 10000;
-PARAMS_HEXAGON.query = {};
-PARAMS_HEXAGON.query.match = {};
-PARAMS_HEXAGON.query.match.deviceId = "BarcelonaHexagon";
-PARAMS_HEXAGON._source = {};
-PARAMS_HEXAGON._source.includes = ['data'];
-PARAMS_HEXAGON._source.excludes = [];
 
 const COLORS = [
   [16, 204, 10],
@@ -83,18 +65,7 @@ const colorScale2 = (value,bool) => {
   else if(value < 100) colorSelected = COLORS[9];
   else colorSelected = COLORS[0];
   return bool == true ? [...colorSelected , 190] : [...colorSelected , 52];
-}
-const elevation = r => {
-  if(r)
-  return 50;
-  return 0;
-}
-
-const opacity = r=> {
-  if(r)
-  return 1;
-  return 0.2;
-}
+};
 
 const MAPSTYLE_SCREENGRID = 0;
 const MAPSTYLE_HEXAGON = 1;
@@ -124,10 +95,8 @@ function getRandomDouble(min,max){
 }
 
 const isNotNull = r => r != null && r != 'undefined';
+const noop = function(){};
 
-var last_hovered_item = {};
-var last_selected_item = {};
-var currently_selected_item = null;
 var nextZoomLevel = 10;
 var nextLngLat = [0,1];
 
@@ -136,11 +105,16 @@ class Root extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      maptype : "geojson",
-      onClickHandler : this.props.onClick
+      maptype : "heatmap",
+      onClickHandler : this.props.onClick,
+      viewport: {
+          ...SO2LevelOverlay.defaultViewport,
+          width: 200,
+          height : 200
+      }
     };
     startZoomInAnimationTimer : null;
-    var app_width = window.innerWidth * 0.99;
+    var app_width = window.innerWidth;
     var app_height = window.innerHeight * 0.90;
     
   }
@@ -172,7 +146,7 @@ class Root extends Component {
 
   _resize() {
     this._onViewportChange({
-      width: window.innerWidth * 0.99,
+      width: window.innerWidth,
       height: window.innerHeight * 0.90 
     });
   }
@@ -226,24 +200,37 @@ class Root extends Component {
   }
   
   render() {
-    const {selectedGeoJsonItem, loadingState, percentage} = this.state;
-    if(this.state.maptype === "screengrid"){
-      <ScreenGridMapContainer />
+    var {selectedGeoJsonItem, loadingState, percentage, viewport} = this.state;
+    var isGeoJson = (this.state.maptype === 'geojson');
+    if(!isGeoJson){
+      selectedGeoJsonItem = null;
     }
-    else if(this.state.maptype === "hexagon"){
-      return(
-        <HexagonMapContainer />
-      );
-    }
-    else if(this.state.maptype === 'geojson'){
-      return (
-        <div>
-          {selectedGeoJsonItem  && <GeoJsonInfoBox selecteditem={selectedGeoJsonItem} name={selectedGeoJsonItem.name} loadingState={loadingState} percentage={percentage}/>}
-          <GeoJsonMapContainer onItemSelected={this._onGeoJsonItemSelected.bind(this)} />
-          <MapTypeController />
-        </div>
-      );
-    }
+    var isHexagon = (this.state.maptype === 'hexagon');
+    var isScreengrid = (this.state.maptype === 'screengrid');
+    var isHeatmap = (this.state.maptype === 'heatmap');
+    
+    
+    
+    return (
+      <div>
+        {isGeoJson && selectedGeoJsonItem && <GeoJsonInfoBox selecteditem={selectedGeoJsonItem} name={selectedGeoJsonItem.name} loadingState={loadingState} percentage={percentage} />}
+        {isGeoJson && <GeoJsonMapContainer onItemSelected={this._onGeoJsonItemSelected.bind(this)} />}
+        {isHexagon && <HexagonMapContainer onItemSelected={this._onGeoJsonItemSelected.bind(this)} />}
+        {isScreengrid && <ScreenGridMapContainer onItemSelected={this._onGeoJsonItemSelected.bind(this)} />}
+        {/* <MapGL
+          {...viewport}
+          mapStyle="mapbox://styles/aerdemekin/cj9h78aws1tox2rrstvt8luje"
+          onViewportChange={this._onViewportChange.bind(this)}
+          mapboxApiAccessToken={MAPBOX_TOKEN}>          
+          {isGeoJson && <GeoJsonMapComponent onItemSelected={this._onGeoJsonItemSelected.bind(this)} />}
+          {isHexagon && <HexagonMapComponent onItemSelected={this._onGeoJsonItemSelected.bind(this)} />}
+          {isScreengrid && <ScreenGridMapContainer onItemSelected={this._onGeoJsonItemSelected.bind(this)} />}
+        </MapGL>
+        {isGeoJson && selectedGeoJsonItem && <GeoJsonInfoBox selecteditem={selectedGeoJsonItem} name={selectedGeoJsonItem.name} loadingState={loadingState} percentage={percentage} />} */}
+        {isHeatmap && <HeatmapContainer onItemSelected={this._onGeoJsonItemSelected.bind(this)} />}
+        <MapTypeController onChange={this.changeMapType.bind(this)}/>
+      </div>
+    );
   }
   
 }

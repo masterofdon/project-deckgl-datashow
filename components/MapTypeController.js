@@ -14,7 +14,8 @@ export default class MapTypeController extends Component {
     constructor(props){
         super(props);
         this.state  = {
-            selected : '1'
+            selected : 'geojson',
+            onItemChange : this.props.onChange
         }
         
     }
@@ -25,12 +26,16 @@ export default class MapTypeController extends Component {
     }
 
     onButtonClick(item){
-        console.log("Item Clicked: " + item);
+        if(item !== this.state.selected){
+            this.state.selected = 'item';
+            this.state.onItemChange(item);
+        }
+        console.log('Clicked: ' + item);
     }
 
     render(){
         return(
-            <RadioButtonItemContainer onNewItemSelected={this.onButtonClick.bind(this)} maptype={'geojson'}/>
+            <RadioButtonItemContainer onNewItemSelected={this.onButtonClick.bind(this)}/>
         );
     }
 

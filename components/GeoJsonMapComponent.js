@@ -63,7 +63,7 @@ const isNotNull = r => r != null && r != 'undefined';
 var last_hovered_item = {};
 var currently_selected_item = null;
 
-export default class GeoJsonMapContainer extends Component {
+export default class GeoJsonMapComponent extends Component {
     constructor(props) {
         super(props);
         this.onItemSelected = this.props.onItemSelected;
@@ -76,7 +76,10 @@ export default class GeoJsonMapContainer extends Component {
             data: null,
 
         };
-        
+        Request(DATA_GEOJSON)
+            .header("Content-Type", "application/json")
+            .header('Authorization', AUTH_TOKEN)
+            .get(JSON.stringify(PARAMS_GEOJSON), this._reponseHandler.bind(this));
     }
 
     _reponseHandler(error,data){
@@ -109,12 +112,6 @@ export default class GeoJsonMapContainer extends Component {
     componentDidMount() {
         window.addEventListener('resize', this._resize.bind(this));
         this._resize();
-        setTimeout(function(){
-            Request(DATA_GEOJSON)
-            .header("Content-Type", "application/json")
-            .header('Authorization', AUTH_TOKEN)
-            .get(JSON.stringify(PARAMS_GEOJSON), this._reponseHandler.bind(this))
-        }.bind(this),500);
     }
 
     _onHover(value) {
@@ -191,13 +188,7 @@ export default class GeoJsonMapContainer extends Component {
         };
         return (
             < div className={"row"} style={containerStyle} >
-                <MapGL
-                    {...viewport}
-                    mapStyle="mapbox://styles/aerdemekin/cj9h78aws1tox2rrstvt8luje"
-                    onViewportChange={this._onViewportChange.bind(this)}
-                    mapboxApiAccessToken={MAPBOX_TOKEN}
-                >
-                    <SO2LevelOverlay viewport={viewport}
+                <SO2LevelOverlay viewport={viewport}
                         data={data}
                         colorScale={colorScale}
                         elevation={elevation}
@@ -205,8 +196,7 @@ export default class GeoJsonMapContainer extends Component {
                         onClick={this._onClick.bind(this)}
                         hovered={this.state.hovered}
                         selected={this.state.selected}
-                    />
-                </MapGL>
+                    />                
             </div >
         )
     }

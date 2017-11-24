@@ -23,18 +23,26 @@ export default class RadioButtonItem extends Component {
 
     render(){
         var {selected, maptype} = this.props;
+        var mapTypeStr = "";
+        if(maptype === 'geojson'){
+            mapTypeStr = "SO2 Level";
+        }else if(maptype === 'hexagon'){
+            mapTypeStr = "Road Quality";
+        }else if(maptype === 'screengrid'){
+            mapTypeStr = "Noise Pol."
+        }
         if(selected){
             return(            
                 <button className='maptype-radiobutton selected' data-maptype={maptype} onClick={this.onClickHandler.bind(this)}>
                     <img src={'assets/img/hexagon.png'} className={'maptype-radiobutton-icon'}/>
-                    <span>{maptype}</span>
+                    <span>{mapTypeStr}</span>
                 </button>
             );
         }
         return(            
             <button className='maptype-radiobutton' data-maptype={maptype} onClick={this.onClickHandler.bind(this)}>
                 <img src={'assets/img/hexagon.png'} className={'maptype-radiobutton-icon'}/>
-                <span>{maptype}</span>
+                <span>{mapTypeStr}</span>
             </button>
         );
         

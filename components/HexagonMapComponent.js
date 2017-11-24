@@ -19,7 +19,7 @@ PARAMS_GEOJSON._source = {};
 PARAMS_GEOJSON._source.includes = ['data'];
 PARAMS_GEOJSON._source.excludes = [];
 
-export default class HexagonMapContainer extends Component {
+export default class HexagonMapComponent extends Component {
 
     constructor(props){
         super(props);
@@ -32,7 +32,7 @@ export default class HexagonMapContainer extends Component {
             data: null,
 
         };
-        
+        requestCsv(DATA_ROAD_QUALITY, this._reponseHandler.bind(this));
     }
 
     _reponseHandler(error,response){
@@ -66,7 +66,6 @@ export default class HexagonMapContainer extends Component {
     componentDidMount() {
         window.addEventListener('resize', this._resize.bind(this));
         this._resize();
-        requestCsv(DATA_ROAD_QUALITY, this._reponseHandler.bind(this));
     }
 
     render(){
@@ -79,18 +78,10 @@ export default class HexagonMapContainer extends Component {
             width : "300px"
         };
         return (
-            <div className="row" style={containerStyle}>
-                <MapGL
-                    {...viewport}
-                    mapStyle="mapbox://styles/aerdemekin/cj9h78aws1tox2rrstvt8luje"
-                    onViewportChange={this._onViewportChange.bind(this)}
-                    mapboxApiAccessToken={MAPBOX_TOKEN}>
-                    <RoadQualityOverlay
-                        viewport={viewport}
-                        data={data || []}
-                    />
-                </MapGL>
-            </div>
+            <RoadQualityOverlay
+                viewport={viewport}
+                data={data || []}
+            />
         );
     }
 
