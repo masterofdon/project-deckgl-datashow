@@ -4,7 +4,6 @@ node_modules/
 NoisePollutionOverlay.js
 RoadQualityOverlay.js
 app3.js
-atsVeri.rar
 data.json
 deckgl-overlay.js
 deckgl-overlay2.js
@@ -28,3 +27,4 @@ package-lock.json
 progress.css
 progress.js
 so2-levels-overlay.js
+atsVeri*

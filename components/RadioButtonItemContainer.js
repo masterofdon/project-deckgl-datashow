@@ -29,21 +29,24 @@ export default class RadioButtonItemContainer extends Component {
 
     render(){
         var {selected} = this.state;
-        var isGeoJsonSelected = false, isHexagonSelected = false, isScreengridSelected = false;
+        var isGeoJsonSelected = false, isHexagonSelected = false, isScreengridSelected = false, isHeatMapSelected = false;
         if(selected === 'geojson')
             isGeoJsonSelected = true;
         else if(selected === 'hexagon')
             isHexagonSelected = true;
         else if(selected === 'screengrid')
             isScreengridSelected = true;
+        else if(selected === 'heatmap')
+            isHeatMapSelected = true;
         else{
             isGeoJsonSelected = true;
         }    
         return(
-            <div className={'container maptype-radiobutton-container'}>                
+            <div className={'maptype-radiobutton-container indent-2'}>                
                 <RadioButtonItem selected={isGeoJsonSelected}  maptype={'geojson'} onclick={this.onClickHandler.bind(this)}/>
                 <RadioButtonItem selected={isHexagonSelected} maptype={'hexagon'} onclick={this.onClickHandler.bind(this)}/>
                 <RadioButtonItem selected={isScreengridSelected} maptype={'screengrid'} onclick={this.onClickHandler.bind(this)}/>
+                <RadioButtonItem selected={isHeatMapSelected} maptype={'heatmap'} onclick={this.onClickHandler.bind(this)}/>
             </div>
         );
     }

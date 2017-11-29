@@ -76,7 +76,8 @@ const MAPSTYLE = [
   'screengrid',
   'hexagon',
   'scatterplot',
-  'geojson'
+  'geojson',
+  'heatmap'
 ]
 
 const MAPDATA = [
@@ -105,18 +106,14 @@ class Root extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      maptype : "heatmap",
+      maptype : "geojson",
       onClickHandler : this.props.onClick,
       viewport: {
           ...SO2LevelOverlay.defaultViewport,
           width: 200,
           height : 200
       }
-    };
-    startZoomInAnimationTimer : null;
-    var app_width = window.innerWidth;
-    var app_height = window.innerHeight * 0.90;
-    
+    };    
   }
 
   componentDidMount() {
@@ -155,10 +152,6 @@ class Root extends Component {
     this.setState({
       viewport: {...this.state.viewport, ...viewport}
     });
-  }
-
-  _objectSelected(){
-     
   }
 
   _onGeoJsonItemSelected(selectedItem){
@@ -212,21 +205,11 @@ class Root extends Component {
     
     
     return (
-      <div>
+      <div className={'row'}>
         {isGeoJson && selectedGeoJsonItem && <GeoJsonInfoBox selecteditem={selectedGeoJsonItem} name={selectedGeoJsonItem.name} loadingState={loadingState} percentage={percentage} />}
         {isGeoJson && <GeoJsonMapContainer onItemSelected={this._onGeoJsonItemSelected.bind(this)} />}
         {isHexagon && <HexagonMapContainer onItemSelected={this._onGeoJsonItemSelected.bind(this)} />}
         {isScreengrid && <ScreenGridMapContainer onItemSelected={this._onGeoJsonItemSelected.bind(this)} />}
-        {/* <MapGL
-          {...viewport}
-          mapStyle="mapbox://styles/aerdemekin/cj9h78aws1tox2rrstvt8luje"
-          onViewportChange={this._onViewportChange.bind(this)}
-          mapboxApiAccessToken={MAPBOX_TOKEN}>          
-          {isGeoJson && <GeoJsonMapComponent onItemSelected={this._onGeoJsonItemSelected.bind(this)} />}
-          {isHexagon && <HexagonMapComponent onItemSelected={this._onGeoJsonItemSelected.bind(this)} />}
-          {isScreengrid && <ScreenGridMapContainer onItemSelected={this._onGeoJsonItemSelected.bind(this)} />}
-        </MapGL>
-        {isGeoJson && selectedGeoJsonItem && <GeoJsonInfoBox selecteditem={selectedGeoJsonItem} name={selectedGeoJsonItem.name} loadingState={loadingState} percentage={percentage} />} */}
         {isHeatmap && <HeatmapContainer onItemSelected={this._onGeoJsonItemSelected.bind(this)} />}
         <MapTypeController onChange={this.changeMapType.bind(this)}/>
       </div>
@@ -234,4 +217,5 @@ class Root extends Component {
   }
   
 }
-render(<Root/>, document.body.appendChild(document.createElement('div')));
+var div = document.createElement('div');
+render(<Root />, document.body.appendChild(div));

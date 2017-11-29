@@ -190,24 +190,22 @@ export default class GeoJsonMapContainer extends Component {
             marginLeft: "15px"
         };
         return (
-            < div className={"row"} style={containerStyle} >
-                <MapGL
-                    {...viewport}
-                    mapStyle="mapbox://styles/aerdemekin/cj9h78aws1tox2rrstvt8luje"
-                    onViewportChange={this._onViewportChange.bind(this)}
-                    mapboxApiAccessToken={MAPBOX_TOKEN}
-                >
-                    <SO2LevelOverlay viewport={viewport}
-                        data={data}
-                        colorScale={colorScale}
-                        elevation={elevation}
-                        onHover={this._onHover.bind(this)}
-                        onClick={this._onClick.bind(this)}
-                        hovered={this.state.hovered}
-                        selected={this.state.selected}
-                    />
-                </MapGL>
-            </div >
+            <MapGL
+                {...viewport}
+                mapStyle="mapbox://styles/aerdemekin/cj9h78aws1tox2rrstvt8luje"
+                onViewportChange={this._onViewportChange.bind(this)}
+                mapboxApiAccessToken={MAPBOX_TOKEN}
+            >
+                <SO2LevelOverlay viewport={viewport}
+                    data={data}
+                    colorScale={colorScale}
+                    elevation={elevation}
+                    onHover={this._onHover.bind(this)}
+                    onClick={this._onClick.bind(this)}
+                    hovered={this.state.hovered}
+                    selected={this.state.selected}
+                />
+            </MapGL>
         )
     }
 }

@@ -29,6 +29,8 @@ export default class RadioButtonItem extends Component {
         }else if(maptype === 'hexagon'){
             mapTypeStr = "Road Quality";
         }else if(maptype === 'screengrid'){
+            mapTypeStr = "Air Quality"
+        }else if(maptype === 'heatmap'){
             mapTypeStr = "Noise Pol."
         }
         if(selected){

@@ -79,18 +79,16 @@ export default class HexagonMapContainer extends Component {
             width : "300px"
         };
         return (
-            <div className="row" style={containerStyle}>
-                <MapGL
-                    {...viewport}
-                    mapStyle="mapbox://styles/aerdemekin/cj9h78aws1tox2rrstvt8luje"
-                    onViewportChange={this._onViewportChange.bind(this)}
-                    mapboxApiAccessToken={MAPBOX_TOKEN}>
-                    <RoadQualityOverlay
-                        viewport={viewport}
-                        data={data || []}
-                    />
-                </MapGL>
-            </div>
+            <MapGL
+                {...viewport}
+                mapStyle="mapbox://styles/aerdemekin/cj9h78aws1tox2rrstvt8luje"
+                onViewportChange={this._onViewportChange.bind(this)}
+                mapboxApiAccessToken={MAPBOX_TOKEN}>
+                <RoadQualityOverlay
+                    viewport={viewport}
+                    data={data || []}
+                />
+            </MapGL>
         );
     }
 

@@ -54,18 +54,16 @@ export default class ScreenGridMapContainer extends Component {
             marginLeft: "10px"
         };
         return(
-            <div class="row" style={containerStyle}>
-                <MapGL
-                    {...viewport}
-                    mapStyle="mapbox://styles/aerdemekin/cj9h78aws1tox2rrstvt8luje"
-                    onViewportChange={this._onViewportChange.bind(this)}
-                    mapboxApiAccessToken={MAPBOX_TOKEN}>
-                    <DeckGLOverlay viewport={viewport}
-                        data={data}
-                        cellSize={20}
-                    />
-                </MapGL>
-            </div>
+            <MapGL
+                {...viewport}
+                mapStyle="mapbox://styles/aerdemekin/cj9h78aws1tox2rrstvt8luje"
+                onViewportChange={this._onViewportChange.bind(this)}
+                mapboxApiAccessToken={MAPBOX_TOKEN}>
+                <DeckGLOverlay viewport={viewport}
+                    data={data}
+                    cellSize={20}
+                />
+            </MapGL>
         );
     }
 
