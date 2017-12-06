@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {render} from 'react-dom';
 import MapGL from 'react-map-gl';
-import RoadQualityOverlay from '../RoadQualityOverlay.js'
+import RoadQualityOverlay from './RoadQualityOverlay';
 import {json as requestJson} from 'd3-request';
 import {request as Request} from 'd3-request'
 import {csv as requestCsv} from 'd3-request';
@@ -69,7 +69,8 @@ export default class HexagonMapComponent extends Component {
     }
 
     render(){
-        const {viewport, data} = this.state;
+        const {data} = this.state;
+        const {viewport} = this.props;
         const containerStyle = {
             marginTop : "20px",
             marginLeft: "10px"

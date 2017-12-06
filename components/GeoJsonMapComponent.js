@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
 import MapGL from 'react-map-gl';
-import SO2LevelOverlay from '../so2-levels-overlay.js'
-import { request as Request } from 'd3-request'
+import SO2LevelOverlay from './SO2LevelOverlay';
+import { request as Request } from 'd3-request';
 
 const DATA_GRID = "https://217.78.97.241:30000/api/1.0/search";
 var PARAMS_GEOJSON = {};
@@ -68,18 +68,18 @@ export default class GeoJsonMapComponent extends Component {
         super(props);
         this.onItemSelected = this.props.onItemSelected;
         this.state = {
-            viewport: {
-                ...SO2LevelOverlay.defaultViewport,
-                width: 200,
-                height : 200
-            },
+            viewport: this.props.viewport,
             data: null,
 
         };
+       this._requestData.bind(this)();
+    }
+
+    _requestData(){
         Request(DATA_GEOJSON)
-            .header("Content-Type", "application/json")
-            .header('Authorization', AUTH_TOKEN)
-            .get(JSON.stringify(PARAMS_GEOJSON), this._reponseHandler.bind(this));
+        .header("Content-Type", "application/json")
+        .header('Authorization', AUTH_TOKEN)
+        .get(JSON.stringify(PARAMS_GEOJSON), this._reponseHandler.bind(this));
     }
 
     _reponseHandler(error,data){
@@ -182,22 +182,18 @@ export default class GeoJsonMapComponent extends Component {
     }
 
     render() {
-        const { viewport, data, hovered, selected } = this.state;
-        const containerStyle = {
-            marginLeft: "15px"
-        };
+        const { data, hovered, selected } = this.state;
+        const {viewport} = this.props;
         return (
-            < div className={"row"} style={containerStyle} >
-                <SO2LevelOverlay viewport={viewport}
-                        data={data}
-                        colorScale={colorScale}
-                        elevation={elevation}
-                        onHover={this._onHover.bind(this)}
-                        onClick={this._onClick.bind(this)}
-                        hovered={this.state.hovered}
-                        selected={this.state.selected}
-                    />                
-            </div >
+            <SO2LevelOverlay viewport={viewport}
+                data={data}
+                colorScale={colorScale}
+                elevation={elevation}
+                onHover={this._onHover.bind(this)}
+                onClick={this._onClick.bind(this)}
+                hovered={this.state.hovered}
+                selected={this.state.selected}
+            />                
         )
     }
 }

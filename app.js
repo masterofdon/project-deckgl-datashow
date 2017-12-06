@@ -16,8 +16,9 @@ import {interpolateNumber as numberInterpolate} from 'd3-interpolate';
 import MapTypeController from './components/MapTypeController';
 import GeoJsonMapComponent from './components/GeoJsonMapComponent';
 import HexagonMapComponent from './components/HexagonMapComponent';
-import SO2LevelOverlay from './so2-levels-overlay';
+import SO2LevelOverlay from './components/SO2LevelOverlay';
 import HeatmapContainer from './components/HeatmapContainer';
+import MapContainer from './components/MapContainer';
 
 var seedrandom = require('seedrandom');
 // Set your mapbox token here
@@ -35,37 +36,6 @@ const DATA_GEOJSON = "data.geojson";
 const DATA_GRID = "https://217.78.97.241:30000/api/1.0/search";
 const PARAMS_GRID = '{"size": 190347,"query": {"match":{"deviceId": "BarcelonaGrid"}},"_source":{"includes":["data"],"excludes":[]}}';
 const AUTH_TOKEN = 'Bearer e9f8de1f-e90d-41aa-a628-bc983c4136f1';
-
-const COLORS = [
-  [16, 204, 10],
-  [85, 204, 30],
-  [132, 209, 33],
-  [173, 209, 33],
-  [209, 209, 33],
-  [209, 173, 33],
-  [209, 150, 33],
-  [209, 106, 33],
-  [209, 68, 33],
-  [209, 33, 33],
-  [137, 32, 178]
-]
-
-const colorScale = r => [r * 255, 140, 200 * (1 - r)];
-const colorScale2 = (value,bool) => {
-  var colorSelected = {};
-  if(value < 10) colorSelected = COLORS[0];
-  else if(value < 20) colorSelected = COLORS[1];
-  else if(value < 30) colorSelected = COLORS[2];
-  else if(value < 40) colorSelected = COLORS[3];
-  else if(value < 50) colorSelected = COLORS[4];
-  else if(value < 60) colorSelected = COLORS[5];
-  else if(value < 70) colorSelected = COLORS[6];
-  else if(value < 80) colorSelected = COLORS[7];
-  else if(value < 90) colorSelected = COLORS[8];
-  else if(value < 100) colorSelected = COLORS[9];
-  else colorSelected = COLORS[0];
-  return bool == true ? [...colorSelected , 190] : [...colorSelected , 52];
-};
 
 const MAPSTYLE_SCREENGRID = 0;
 const MAPSTYLE_HEXAGON = 1;
@@ -106,7 +76,7 @@ class Root extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      maptype : "geojson",
+      maptype : "heatmap",
       onClickHandler : this.props.onClick,
       viewport: {
           ...SO2LevelOverlay.defaultViewport,
@@ -117,73 +87,6 @@ class Root extends Component {
   }
 
   componentDidMount() {
-    window.addEventListener('resize', this._resize.bind(this));
-    this._resize();
-  }
-
-  _zoomInToArea(lnglat , zoomLevel){
-    nextZoomLevel = zoomLevel;
-    nextLngLat = lnglat;
-    var i = arrayInterpolate([this.state.viewport.longitude , this.state.viewport.latitude] , [lnglat[0],lnglat[1]]);
-    var zoom = numberInterpolate(this.state.viewport.zoom,nextZoomLevel);
-    for(var x = 1.0;x < 11.0;x+=1.0){
-      var dd = i(x/10);
-      var kk = zoom(0.1 * x);
-      var vvv = [...dd,kk]
-      this.startZoomInAnimationTimer = window.setTimeout(this._animateZoomIn.bind(this)(vvv),x * 50.0);
-    }
-    
-  }
-
-  _animateZoomIn(latlngzoom){ 
-    this.setState({
-      viewport : { ...this.state.viewport , zoom : latlngzoom[2] , longitude : latlngzoom[0] , latitude : latlngzoom[1] }
-    });    
-  }
-
-  _resize() {
-    this._onViewportChange({
-      width: window.innerWidth,
-      height: window.innerHeight * 0.90 
-    });
-  }
-
-  _onViewportChange(viewport) {
-    this.setState({
-      viewport: {...this.state.viewport, ...viewport}
-    });
-  }
-
-  _onGeoJsonItemSelected(selectedItem){
-    var x = Math.random();
-    this.setState({
-      selectedGeoJsonItem : selectedItem,
-      loadingState : 'loading',
-      percentage : x
-    });
-    if(test){
-      setTimeout(function(e){
-        this._onGeoJsonItemDataLoaded.bind(this)();
-      }.bind(this),4000);
-    }
-  }
-
-  _onGeoJsonItemUnselected(){
-    this.setState({
-      selectedGeoJsonItem : null,
-      loadingState : 'stopped'
-    });
-  }
-
-  _onGeoJsonItemDataLoaded(){
-    this.setState({
-      loadingState : 'loaded'
-    });
-    setTimeout(function(e){
-      this.setState({
-        loadingState : 'finished'
-      });
-    }.bind(this),4000);
   }
 
   changeMapType(maptype){
@@ -193,24 +96,10 @@ class Root extends Component {
   }
   
   render() {
-    var {selectedGeoJsonItem, loadingState, percentage, viewport} = this.state;
-    var isGeoJson = (this.state.maptype === 'geojson');
-    if(!isGeoJson){
-      selectedGeoJsonItem = null;
-    }
-    var isHexagon = (this.state.maptype === 'hexagon');
-    var isScreengrid = (this.state.maptype === 'screengrid');
-    var isHeatmap = (this.state.maptype === 'heatmap');
-    
-    
-    
+    var {viewport} = this.state;
     return (
       <div className={'row'}>
-        {isGeoJson && selectedGeoJsonItem && <GeoJsonInfoBox selecteditem={selectedGeoJsonItem} name={selectedGeoJsonItem.name} loadingState={loadingState} percentage={percentage} />}
-        {isGeoJson && <GeoJsonMapContainer onItemSelected={this._onGeoJsonItemSelected.bind(this)} />}
-        {isHexagon && <HexagonMapContainer onItemSelected={this._onGeoJsonItemSelected.bind(this)} />}
-        {isScreengrid && <ScreenGridMapContainer onItemSelected={this._onGeoJsonItemSelected.bind(this)} />}
-        {isHeatmap && <HeatmapContainer onItemSelected={this._onGeoJsonItemSelected.bind(this)} />}
+        <MapContainer maptype={this.state.maptype} mapstyle={"mapbox://styles/aerdemekin/cjaksz2udc14a2rqo9lshmsdc"}/>
         <MapTypeController onChange={this.changeMapType.bind(this)}/>
       </div>
     );

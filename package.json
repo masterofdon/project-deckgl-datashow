@@ -10,7 +10,7 @@
     "d3-interpolate": "^1.1.5",
     "d3-request": "^1.0.5",
     "deck.gl": "^4.1.0",
-    "jQuery": "^1.7.4",
+    "jquery": "^1.7.4",
     "luma.gl": "^4.0.1",
     "mapbox-gl": "^0.42.2",
     "progressbar.js": "^1.0.1",

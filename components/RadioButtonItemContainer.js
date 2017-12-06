@@ -13,7 +13,7 @@ export default class RadioButtonItemContainer extends Component {
     constructor(props){
         super(props);
         this.state = {
-            selected : 'geojson',
+            selected : this.props.selected,
             onNewItemSelected : this.props.onNewItemSelected
         }
     }

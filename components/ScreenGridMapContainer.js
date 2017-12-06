@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
 import MapGL from 'react-map-gl';
-import DeckGLOverlay from '../deckgl-overlay.js';
-import NoisePollutionOverlay from '../NoisePollutionOverlay.js'
+import ScreenGridOverlay from './ScreenGridOverlay';
+import NoisePollutionOverlay from './NoisePollutionOverlay';
 import { json as requestJson } from 'd3-request';
 
 const DATA_URL = 'istanbul_noise_pollution.json';
@@ -49,17 +49,13 @@ export default class ScreenGridMapContainer extends Component {
 
     render() {
         const { viewport, data } = this.state;
-        const containerStyle = {
-            marginTop: "20px",
-            marginLeft: "10px"
-        };
         return(
             <MapGL
                 {...viewport}
                 mapStyle="mapbox://styles/aerdemekin/cj9h78aws1tox2rrstvt8luje"
                 onViewportChange={this._onViewportChange.bind(this)}
                 mapboxApiAccessToken={MAPBOX_TOKEN}>
-                <DeckGLOverlay viewport={viewport}
+                <ScreenGridOverlay viewport={viewport}
                     data={data}
                     cellSize={20}
                 />

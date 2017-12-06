@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
 import MapGL from 'react-map-gl';
-import SO2LevelOverlay from '../so2-levels-overlay.js'
+import SO2LevelOverlay from './SO2LevelOverlay';
 import { request as Request } from 'd3-request'
 
 const DATA_GRID = "https://217.78.97.241:30000/api/1.0/search";

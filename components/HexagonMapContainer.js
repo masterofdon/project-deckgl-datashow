@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {render} from 'react-dom';
 import MapGL from 'react-map-gl';
-import RoadQualityOverlay from '../RoadQualityOverlay.js'
+import RoadQualityOverlay from './RoadQualityOverlay.js'
 import {json as requestJson} from 'd3-request';
 import {request as Request} from 'd3-request'
 import {csv as requestCsv} from 'd3-request';
