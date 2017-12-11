@@ -7,7 +7,7 @@ const webpack = require('webpack');
 
 const CONFIG = {
   entry: {
-    app: resolve('./app.js')
+    app: resolve('./main.js')
   },
   devtool: 'source-map',
   output: {

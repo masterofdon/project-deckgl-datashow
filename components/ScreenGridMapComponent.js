@@ -3,8 +3,6 @@ import ScreenGridOverlay from './ScreenGridOverlay';
 import { json as requestJson } from 'd3-request';
 
 const DATA_URL = 'http://localhost:3030/istanbul_noise_pollution.json';
-const AUTH_TOKEN = 'Bearer e9f8de1f-e90d-41aa-a628-bc983c4136f1';
-const MAPBOX_TOKEN = 'pk.eyJ1IjoiYWVyZGVtZWtpbiIsImEiOiJjajhtdGRxb2ExMmE5MnZqczljOXA0MDJhIn0.Fo8sD9jDikhVUu72blwRUA'; // eslint-disable-line
 
 export default class ScreenGridMapComponent extends Component {
 
@@ -19,9 +17,10 @@ export default class ScreenGridMapComponent extends Component {
             data : null
         }
         requestJson(DATA_URL, (error, response) => {
-            //console.log(response);
             if (!error) {
                 this.setState({ data: response });
+            }else {
+                console.error(error);
             }
         });
     }
