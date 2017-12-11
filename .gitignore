@@ -1,0 +1,14 @@
+node_modules/
+.vscode/
+data.json
+erdem_polygon.json
+final_points.csv
+glyphicons.less
+isbak_logo.png
+istanbul_geojson.json
+istanbul_noise_pollution.json
+last-load-data.csv
+last_data.json
+package-lock.json
+atsVeri*
+earthquakes*

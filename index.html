@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset='UTF-8' />
+    <title>ISBAK - Monitoring App</title>
+    <style>
+      body {margin: 0; padding: 0; overflow: hidden;}
+    </style>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous" />
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Inconsolata|PT+Sans|PT+Sans+Narrow|Raleway:600|Source+Code+Pro|Spectral+SC|Vollkorn|Yantramanav" rel="stylesheet">
+    <link href="/assets/css/sidebar.css" rel="stylesheet" />
+    <link href="/assets/css/map.css" rel="stylesheet" />
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js"></script>
+    <script type="text/javascript" src="https://github.com/nagix/chartjs-plugin-streaming/releases/download/v1.2.0/chartjs-plugin-streaming.min.js"></script>
+  </head>
+  <body style="background-color: #354555">
+    <div>
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <button type="button" class="btn btn-default" aria-label="Left Align" onclick="toogleNav()">
+          <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+        </button>
+        <a class="navbar-brand" href="#" style="height:70px">
+          <img src="/assets/img/ion.logo.disi-02.png" width="100" height="40" alt="">
+        </a>
+        
+      </nav>
+    </div>
+    <div id="mySidenav" class="sidenav bg-dark">
+      <a href="#">About</a>
+      <a href="#">Services</a>
+    </div>
+    <script src='bundle.js'></script>
+    <style type="text/css">
+      /* Style page content - use this if you want to push the page content to the right when you open the side navigation */
+      #main {
+          transition: margin-left .5s;
+          padding: 20px;
+      }
+      .mapboxgl-canvas-container {
+        width : 100vw !important;
+        height: 90vh !important;
+      }
+      .mapboxgl-missing-css{
+          display: none;
+      }
+      #container {
+        margin: 10%;
+        width: 150px;
+        height: 150px;
+        position: relative;
+      }
+      .mapboxgl-ctrl-attrib {
+        display: none;
+      }
+    </style>
+    <script type="text/javascript">
+      var navToogle= false;
+      function toogleNav(){
+        if(navToogle){
+          closeNav()
+          navToogle = false;
+        }else{
+          openNav();
+          navToogle = true;
+        }
+      }
+      function openNav() {
+        document.getElementById("mySidenav").style.width = "250px";
+      }
+      function closeNav() {
+        document.getElementById("mySidenav").style.width = "0";
+      }
+      
+      
+      
+    </script>
+  </body>
+</html>
