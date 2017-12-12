@@ -51,7 +51,7 @@ export default class HeatmapComponent extends Component {
             //Heatmap layers also work with a vector tile source.
             this.addSource('earthquakes', {
                 "type": "geojson",
-                "data": "earthquakes_output.geojson"
+                "data": "example/earthquakes_output.geojson"
             });
             var layers = this.getStyle().layers;
             // Find the index of the first symbol layer in the map style
