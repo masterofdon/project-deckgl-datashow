@@ -1,9 +1,17 @@
 {
-  "name" : "ion-map-explorer",
-  "version" : "0.0.2",
-  "description" : "React components for map explorer of ION Dashboard",
-  "keywords" : ["map","deckgl","webgl","reactmap","react","dataviz","map visualization"],
-  "main" : "index.js",  
+  "name": "ion-map-explorer",
+  "version": "0.0.2",
+  "description": "React components for map explorer of ION Dashboard",
+  "keywords": [
+    "map",
+    "deckgl",
+    "webgl",
+    "reactmap",
+    "react",
+    "dataviz",
+    "map visualization"
+  ],
+  "main": "index.js",
   "scripts": {
     "start-local": "webpack-dev-server --env.local --progress --hot --port 3030 --open",
     "start": "webpack-dev-server --progress --hot --port 3030 --open",
@@ -18,7 +26,9 @@
     "jquery": "^1.7.4",
     "luma.gl": "^4.0.1",
     "mapbox-gl": "^0.42.2",
+    "mqtt": "^2.15.0",
     "progressbar.js": "^1.0.1",
+    "rbush": "^2.0.1",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
     "react-map-gl": "^3.0.0",

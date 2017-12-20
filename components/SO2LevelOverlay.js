@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-
+import {start as StartPerf, end as EndPerf} from './Performancer';
 import DeckGL, {GeoJsonLayer} from 'deck.gl';
 
 const LIGHT_SETTINGS = {
@@ -26,16 +26,26 @@ export default class SO2LevelOverlay extends Component {
       }
 
     _initialize(gl) {
-        setParameters(gl, {
-            depthTest: true,
-            depthFunc: gl.LEQUAL
-        });
+        // setParameters(gl, {
+        //     depthTest: true,
+        //     depthFunc: gl.LEQUAL
+        // });
+    }
+
+    componentDidUpdate(){
+        console.log("SO2: ComponentDidUpdate");
+    }
+
+    componentDidMount(){
+        console.log("SO2: ComponentDidMount");
     }
 
     render() {
+        StartPerf("RenderSOOverlay");
         const {viewport, data, colorScale , elevation , hovered, selected} = this.props;
         if (!data) {
-        return null;
+            EndPerf("RenderSOOverlay");
+            return null;
         }
 
         const layer = new GeoJsonLayer({
@@ -46,7 +56,7 @@ export default class SO2LevelOverlay extends Component {
             filled: true,
             extruded: true,
             wireframe: true,
-            fp64: true,
+            fp64: false,
             getElevation: f => elevation(f.properties.selected || f.properties.hovered),
             updateTriggers: {
                 getElevation: [hovered,selected]
@@ -58,9 +68,9 @@ export default class SO2LevelOverlay extends Component {
             onHover: this.props.onHover,
             onClick : this.props.onClick
         });
-
+        EndPerf("RenderSOOverlay");
         return (
-        <DeckGL {...viewport} layers={ [layer]}/>
+            <DeckGL {...viewport} useDevicePixels={false} layers={ [layer]}/>
         );
     }
 }

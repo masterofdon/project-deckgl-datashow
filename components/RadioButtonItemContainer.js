@@ -29,24 +29,28 @@ export default class RadioButtonItemContainer extends Component {
 
     render(){
         var {selected} = this.state;
-        var isGeoJsonSelected = false, isHexagonSelected = false, isScreengridSelected = false, isHeatMapSelected = false;
+        var isGeoJsonSelected = false, isHexagonSelected = false, isScreengridSelected = false, isHeatMapSelected = false, isTaxiIconSelected = false;
         if(selected === 'geojson')
             isGeoJsonSelected = true;
         else if(selected === 'hexagon')
             isHexagonSelected = true;
         else if(selected === 'screengrid')
             isScreengridSelected = true;
-        else if(selected === 'heatmap')
+        else if(selected === 'heatmap'){
             isHeatMapSelected = true;
+        }else if(selected === 'taxiicon'){
+            isTaxiIconSelected = true;
+        }
         else{
             isGeoJsonSelected = true;
         }    
         return(
             <div className={'maptype-radiobutton-container indent-2'}>                
-                <RadioButtonItem selected={isGeoJsonSelected}  maptype={'geojson'} onclick={this.onClickHandler.bind(this)}/>
-                <RadioButtonItem selected={isHexagonSelected} maptype={'hexagon'} onclick={this.onClickHandler.bind(this)}/>
-                <RadioButtonItem selected={isScreengridSelected} maptype={'screengrid'} onclick={this.onClickHandler.bind(this)}/>
-                <RadioButtonItem selected={isHeatMapSelected} maptype={'heatmap'} onclick={this.onClickHandler.bind(this)}/>
+                <RadioButtonItem selected={isGeoJsonSelected} mapTypeStr={'SO2 Level'}  maptype={'geojson'} onclick={this.onClickHandler.bind(this)}/>
+                <RadioButtonItem selected={isHexagonSelected} mapTypeStr={'Road Quality'} maptype={'hexagon'} onclick={this.onClickHandler.bind(this)}/>
+                <RadioButtonItem selected={isScreengridSelected} mapTypeStr={'Air Quality'} maptype={'screengrid'} onclick={this.onClickHandler.bind(this)}/>
+                <RadioButtonItem selected={isHeatMapSelected} mapTypeStr={'Noise Pol.'} maptype={'heatmap'} onclick={this.onClickHandler.bind(this)}/>
+                <RadioButtonItem selected={isTaxiIconSelected} mapTypeStr={'Taxi Icon'} maptype={'taxiicon'} onclick={this.onClickHandler.bind(this)}/>
             </div>
         );
     }

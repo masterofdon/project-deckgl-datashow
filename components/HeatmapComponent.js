@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import SO2LevelOverlay from './SO2LevelOverlay';
+import { config } from 'luma.gl/dist/packages/math/src/common';
 
 export default class HeatmapComponent extends Component {
 
@@ -14,6 +15,7 @@ export default class HeatmapComponent extends Component {
             map : null,
             data: null,
         }
+        this.onMapStateChange = this.props.onMapStateChange;
         this.resize = this._resize.bind(this);
     }
 
@@ -37,7 +39,8 @@ export default class HeatmapComponent extends Component {
     
 
     componentWillUnmount(){
-        var visibility = this.state.map.getLayoutProperty('earthquakes-heat','visibility');
+        var visibility = this.state.map && this.state.map.getLayoutProperty('earthquakes-heat','visibility');
+        console.log(visibility);
         if (visibility === 'visible') {
             this.state.map.setLayoutProperty('earthquakes-heat', 'visibility', 'none');
         }
@@ -46,6 +49,7 @@ export default class HeatmapComponent extends Component {
 
     loadMapData(nodeElement){
         this.state.map = nodeElement.getMap();
+        const $this = this;
         this.state.map.on('load',function(e){
             //Add a geojson point source.
             //Heatmap layers also work with a vector tile source.
@@ -123,7 +127,7 @@ export default class HeatmapComponent extends Component {
                     },
                 }
             }, firstSymbolId);
-        
+            //$this.onMapStateChange('passive');
             // this.addLayer({
             //     "id": "earthquakes-point",
             //     "type": "circle",
@@ -170,9 +174,15 @@ export default class HeatmapComponent extends Component {
 
     render(){
         const {map} = this.props;
+        var visibility = this.state.map && this.state.map.getLayoutProperty('earthquakes-heat','visibility');
+        console.log("Visibility: " + visibility);
+        if(visibility === 'none'){
+            this.state.map.setLayoutProperty('earthquakes-heat' , 'visibility' ,'visible');
+        }
         if(map){
             this.state.map = map;
-            this.loadMapData(map);
+            //this.onMapStateChange('active');
+            setTimeout(this.loadMapData.bind(this)(map),2000);
         }
         return(
             <input type={'hidden'} />

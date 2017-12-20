@@ -6,7 +6,8 @@ const STR_SELECTIONS = [
     'so2level',
     'noisepollution',
     'airquality',
-    'roadquality'
+    'roadquality',
+    'taxiicon'
 ]
 
 export default class MapTypeController extends Component {

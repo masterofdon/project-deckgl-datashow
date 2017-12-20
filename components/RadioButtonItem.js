@@ -11,7 +11,8 @@ export default class RadioButtonItem extends Component {
     constructor(props){
         super(props);
         this.state = {
-            onClickHandler : this.props.onclick
+            onClickHandler : this.props.onclick,
+            mapTypeStr : this.props.mapTypeStr
         }
     }
 
@@ -23,16 +24,16 @@ export default class RadioButtonItem extends Component {
 
     render(){
         var {selected, maptype} = this.props;
-        var mapTypeStr = "";
-        if(maptype === 'geojson'){
-            mapTypeStr = "SO2 Level";
-        }else if(maptype === 'hexagon'){
-            mapTypeStr = "Road Quality";
-        }else if(maptype === 'screengrid'){
-            mapTypeStr = "Air Quality"
-        }else if(maptype === 'heatmap'){
-            mapTypeStr = "Noise Pol."
-        }
+        var {mapTypeStr} = this.state;
+        // if(maptype === 'geojson'){
+        //     mapTypeStr = "SO2 Level";
+        // }else if(maptype === 'hexagon'){
+        //     mapTypeStr = "Road Quality";
+        // }else if(maptype === 'screengrid'){
+        //     mapTypeStr = "Air Quality"
+        // }else if(maptype === 'heatmap'){
+        //     mapTypeStr = "Noise Pol."
+        // }
         if(selected){
             return(            
                 <button className='maptype-radiobutton selected' data-maptype={maptype} onClick={this.onClickHandler.bind(this)}>

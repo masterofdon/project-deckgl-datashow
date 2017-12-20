@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
+import MapComponent from './MapComponent';
 import MapGL from 'react-map-gl';
 import SO2LevelOverlay from './SO2LevelOverlay';
 import { request as Request } from 'd3-request';
+import { setTimeout } from 'timers';
+import { start as StartPerf, end as EndPerf} from './Performancer';
 
 const DATA_GRID = "https://217.78.97.241:30000/api/1.0/search";
 var PARAMS_GEOJSON = {};
@@ -60,29 +63,29 @@ const opacity = r => {
 }
 
 const isNotNull = r => r != null && r != 'undefined';
+const isNull = r => r == null || r === 'undefined'
+
 var last_hovered_item = {};
 var currently_selected_item = null;
 
-export default class GeoJsonMapComponent extends Component {
+export default class GeoJsonMapComponent extends MapComponent {
     constructor(props) {
         super(props);
         this.onItemSelected = this.props.onItemSelected;
+        
         this.state = {
             viewport: this.props.viewport,
             data: null,
-
+            currentEvent : null
         };
-       this._requestData.bind(this)();
+        this.loaddataurl = DATA_GEOJSON;
+       //this._requestGeoJsonData.bind(this)();
+        this.loadDataCallback = this._responseHandler.bind(this);
+        this.startOperation('loaddata',2000);
+        
     }
 
-    _requestData(){
-        Request(DATA_GEOJSON)
-        .header("Content-Type", "application/json")
-        .header('Authorization', AUTH_TOKEN)
-        .get(JSON.stringify(PARAMS_GEOJSON), this._reponseHandler.bind(this));
-    }
-
-    _reponseHandler(error,data){
+    _responseHandler(error,data){
         var jsonParsed = JSON.parse(data.response);
         var resultset = jsonParsed._embedded || jsonParsed.features;
         var features = [];
@@ -93,7 +96,7 @@ export default class GeoJsonMapComponent extends Component {
         object.features = features;
         var last = JSON.parse(JSON.stringify(object));
         //this.setState({ data: last });
-        this.setState({data: jsonParsed});
+        this.setState({data: jsonParsed , currentEvent : "EventRenderData"});
     }
 
     _onViewportChange(viewport) {
@@ -109,9 +112,29 @@ export default class GeoJsonMapComponent extends Component {
         });
     }
 
+    componentWillMount(){
+    }
+
     componentDidMount() {
         window.addEventListener('resize', this._resize.bind(this));
         this._resize();
+    }
+
+    componentWillUnmount(){
+        window.removeEventListener('resize',this.resize);
+    }
+
+    componentWillUpdate(nextProps, nextState){
+        const {currentEvent} = nextState;
+        if(currentEvent === 'EventRenderData'){
+        }
+    }
+
+    componentDidUpdate(prevProps, prevState){
+        const {currentEvent} = this.state;
+        if(currentEvent === 'EventRenderData'){       
+            this.state.currentEvent = null;
+        }
     }
 
     _onHover(value) {
@@ -168,7 +191,6 @@ export default class GeoJsonMapComponent extends Component {
                 return true;
             }
             this.state.data.features[currently_selected_item.index].properties.selected = false;
-
         }
         currently_selected_item = value.object;
         currently_selected_item.index = value.index;
@@ -182,7 +204,9 @@ export default class GeoJsonMapComponent extends Component {
     }
 
     render() {
-        const { data, hovered, selected } = this.state;
+        const { data, hovered, selected, currentEvent } = this.state;
+        if(currentEvent === 'EventRenderData'){
+        }
         const {viewport} = this.props;
         return (
             <SO2LevelOverlay viewport={viewport}
