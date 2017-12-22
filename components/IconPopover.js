@@ -1,4 +1,6 @@
 import React , {Component} from 'react';
+import IconPopoverHeader from './IconPopoverHeader';
+import IconPopoverContentList from './IconPopoverContentList';
 
 export default class IconPopover extends Component{
     
@@ -7,11 +9,11 @@ export default class IconPopover extends Component{
     }
 
     render(){
-
+        const {header , devices, onItemSelected} = this.props;
         return(
-            <div>
-                <IconPopoverHeader />
-                <IconPopoverContent />
+            <div className='iconpopover-container'>
+                <IconPopoverHeader header={header}/>
+                <IconPopoverContentList onItemSelected={onItemSelected} devices={devices}/>
             </div>
         )
 

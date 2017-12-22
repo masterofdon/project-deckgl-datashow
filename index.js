@@ -13,9 +13,14 @@ export default class IONMapExtension extends Component {
       maptype : "heatmap",
       loadstatus : 'passive',
       onClickHandler : this.props.onClick
-    };    
+    }; 
+    this.handleScroll = this.handleScroll.bind(this);
   }
-
+  handleScroll(event){
+    console.log("Handle Scroll");
+    event.preventDefault();
+    event.stopPropagation();
+  }
   componentDidMount() {
   }
 
@@ -40,7 +45,7 @@ export default class IONMapExtension extends Component {
   render() {
     const {loadstatus} = this.state;
     return (
-      <div className={'row'}>
+      <div className={'row'} onWheel={this.handleScroll}>
         <MapContainer onMapStateChange={this._onMapStateChange.bind(this)} maptype={this.state.maptype} mapstyle={"mapbox://styles/aerdemekin/cjaksz2udc14a2rqo9lshmsdc"}/>
         <MapTypeController onChange={this.changeMapType.bind(this)}/>
         <LoadingScreenContainer status={loadstatus}/>
