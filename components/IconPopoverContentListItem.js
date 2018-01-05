@@ -7,7 +7,6 @@ export default class IconPopoverContentListItem extends Component{
     }
 
     _onClickHandler(event){
-        console.log("CLICKED");
         this.onItemSelected(event);
     }
 

@@ -19,9 +19,17 @@ export default class IconPopoverContentList extends Component {
     }
 
     render() {
-        const { devices, onItemSelected } = this.props;
+        const {onItemSelected} = this.props;
+        var {devices , search} = this.props;
+        if(search != null && search != 'undefined'){
+            devices = devices.filter(
+            function(item){
+                return item.name.toLowerCase().search(
+                 search.toLowerCase()) !== -1;
+            });
+        }
         const listItems = devices.map((device) =>
-            <IconPopoverContentListItem key={device.id} onItemSelected={onItemSelected} deviceid={device.id} />
+            <IconPopoverContentListItem key={device.id} onItemSelected={onItemSelected} deviceid={device.name} />
         );
         return (
             <ul ref={this.paneDidMount} onWheel={this.handleScroll} className={'popover-list'}>

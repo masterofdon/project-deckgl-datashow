@@ -19,7 +19,6 @@ export default class RadioButtonItem extends Component {
     onClickHandler(item){        
         var maptype = item.currentTarget.getAttribute('data-maptype');
         this.state.onClickHandler(maptype);
-        console.log("GOT: " + maptype);
     }
 
     render(){

@@ -31,7 +31,6 @@ export default class MapTypeController extends Component {
             this.state.selected = 'item';
             this.state.onItemChange(item);
         }
-        console.log('Clicked: ' + item);
     }
 
     render(){

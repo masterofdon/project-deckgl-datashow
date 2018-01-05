@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import { Badge } from 'antd';
 
 export default class InfoBoxHeader extends Component {
 
@@ -15,8 +16,8 @@ export default class InfoBoxHeader extends Component {
             textAlign : "center"
         }
         return (
-            <div className={"row infobox-header-container"}>
-                <h1  style={textStyle} className={"infobox-header-text"}>{this.props.displaytext}</h1>
+            <div className={"infobox-header-container"}>
+                <Badge status="error" className={"infobox-header-text"} text={this.props.displaytext}/>
             </div>
         );
     }

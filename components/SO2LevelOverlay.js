@@ -33,18 +33,16 @@ export default class SO2LevelOverlay extends Component {
     }
 
     componentDidUpdate(){
-        console.log("SO2: ComponentDidUpdate");
     }
 
     componentDidMount(){
-        console.log("SO2: ComponentDidMount");
     }
 
     render() {
-        StartPerf("RenderSOOverlay");
+        //StartPerf("RenderSOOverlay");
         const {viewport, data, colorScale , elevation , hovered, selected} = this.props;
         if (!data) {
-            EndPerf("RenderSOOverlay");
+            //EndPerf("RenderSOOverlay");
             return null;
         }
 
@@ -68,7 +66,7 @@ export default class SO2LevelOverlay extends Component {
             onHover: this.props.onHover,
             onClick : this.props.onClick
         });
-        EndPerf("RenderSOOverlay");
+        //EndPerf("RenderSOOverlay");
         return (
             <DeckGL {...viewport} useDevicePixels={false} layers={ [layer]}/>
         );

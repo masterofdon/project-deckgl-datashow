@@ -17,7 +17,6 @@ export default class IONMapExtension extends Component {
     this.handleScroll = this.handleScroll.bind(this);
   }
   handleScroll(event){
-    console.log("Handle Scroll");
     event.preventDefault();
     event.stopPropagation();
   }

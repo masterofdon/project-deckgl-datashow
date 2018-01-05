@@ -5,12 +5,15 @@ import {json as requestJson} from 'd3-request';
 import mapboxgl from 'mapbox-gl';
 import {Popup} from 'react-map-gl';
 import Mqtt from 'mqtt';
+import ApiStringBuilder from './ApiStringBuilder';
+import AuthModule from './AuthModule';
 
-const DATA_GEOJSON = "http://localhost:3030/example/earthquakes_output.geojson";
-const AUTH_TOKEN = "df3600c0-1faa-4fb3-b270-f5e2a0b2e61e";
+const AUTH_TOKEN = "d9d2a4da-086e-4393-ae32-b02a140f00cb";
+const TOKEN = AUTH_TOKEN;
 const PARAMS_GEOJSON = {};
 const WEB_SOCKET_ADDR = 'wss://10.254.157.165:30000/ws';
-const DEVICE_DATA = 'https://10.254.157.165:30000/api/1.0/devices?&access_token=df3600c0-1faa-4fb3-b270-f5e2a0b2e61e&size=3000&page=0';
+//const DEVICE_DATA = 'https://10.254.157.165:30000/api/1.0/devices?&access_token=df3600c0-1faa-4fb3-b270-f5e2a0b2e61e&size=3000&page=0';
+//const DEVICE_DETAILS = 'https://10.254.157.165:30000/api/1.0/devices/5a38b8199c436d0019df687f/details?access_token=df3600c0-1faa-4fb3-b270-f5e2a0b2e61e';
 const isNotNull = r => r != null && r != 'undefined';
 const isNull = r => r == null || r === 'undefined'
 
@@ -24,70 +27,55 @@ export default class IconMapComponent extends Component {
             showCluster : true,
             map : this.props.map,
             popupLatLng : null,
-            deviceArray : null           
+            deviceArray : null,
+            selectedDevice : null           
         };
         this.websocket = null;
-        this.deviceList = null;
+        this.deviceList = null;        
         this._requestServerData();
         this._requestIconData();
         this.onPopupShow = this.props.onPopupShow;
+        this.onPopupHide = this.props.onPopupHide;
         this.lastHovered = null;
         this.onDeviceListUpdated = this.props.onDeviceListUpdated;
+        this.onDeviceDetailsUpdated = this.props.onDeviceDetailsUpdated;
         this.websocket = Mqtt.connect(WEB_SOCKET_ADDR, {
             protocol: 'wss',
             username : 'nethackathon',
-            password : 'df3600c0-1faa-4fb3-b270-f5e2a0b2e61e'
+            password : AuthModule.getInstance().getAuthObject('itest').access_token
         });
         this.websocket.on('message',function(topic,message){
             console.log('Incoming Message:\r\n Topic: ' + topic + '\r\n + Message: ' + message);
-        });
-        //this.websocket.subscribe('topic', () => console.log("Sucbscription success."));
+            if(this.state.selectedDevice && topic === this.state.selectedDevice.device_id){
+                console.log("GELDI");
+                this.onDeviceDetailsUpdated(JSON.parse(message));
+            }
+        }.bind(this));
+        
     }
-
-    _requestData(){
-        Request(DATA_GEOJSON)
-        .header("Content-Type", "application/json")
-        .header('Authorization', AUTH_TOKEN)
-        .get(JSON.stringify(PARAMS_GEOJSON), this._reponseHandler.bind(this));
-    }
-
-    _requestData2(callback){
-        Request(DATA_GEOJSON)
-        .header("Content-Type", "application/json")
-        .header('Authorization', AUTH_TOKEN)
-        .get(JSON.stringify(PARAMS_GEOJSON), callback);
-    }
-
-    _responseHandler2(error,response){
-        if(error){
-            consoler.error("Error while request Icon Data");
-            throw new Error("ERROR");
-        }
-        var features = JSON.parse(response.response).features;
-        var i = 0;
-        var itemSize = this.state.featureCollection.features.length;
-        for(;i < itemSize; i++){
-            this.state.featureCollection.features[i].geometry.coordinates = features[i].geometry.coordinates;
-        }
-        this.setState({
-            data : this.state.featureCollection.features
-        });
-        this.onDeviceListUpdated(this.state.featureCollection);
-    }
-
     _requestServerData(){
-        Request(DEVICE_DATA)
+        var x = AuthModule.getInstance().getAuthObject('itest');
+        var apistrbuilder = new ApiStringBuilder();
+        var queryStr = apistrbuilder
+        .api('1.0')
+        .devices()
+        .parameters({
+            access_token : x.access_token,
+            size : 2000
+        })
+            .toString();
+        Request(queryStr)
         .header("Content-Type", "application/json")
-        .header('Authorization', AUTH_TOKEN)
+        .header('Authorization', TOKEN)
         .get(JSON.stringify(PARAMS_GEOJSON), this._serverResponseHandler.bind(this));
     }
 
     _requestIconData(){
         requestJson('http://localhost:3030/example/location-icon-mapping.json', (error, response) => {
             if (!error) {
-              this.setState({iconMapping: response});
+                this.setState({iconMapping: response});
             }
-          })
+        });
     }
 
     _serverResponseHandler(err, response){
@@ -99,6 +87,7 @@ export default class IconMapComponent extends Component {
         const fields = [
             'address',
             'administrationStatus',
+            'capability',
             'id',
             'lastUpdateDate',
             'name',
@@ -124,36 +113,33 @@ export default class IconMapComponent extends Component {
             feature.geometry.coordinates = [];
             for(var j = 0;j < fieldsLength ; j++){
                 feature.properties[fields[j]] = this.deviceList[i][fields[j]];
+            }            
+            if(!isNull(feature.properties.address.fixedLocation)){
+                feature.geometry.coordinates.push(feature.properties.address.fixedLocation.longitude);
+                feature.geometry.coordinates.push(feature.properties.address.fixedLocation.latitude);
+                this.state.featureCollection.features.push(feature);
             }
-            this.state.featureCollection.features.push(feature);
-            //this.websocket.subscribe(deviceList[i].id,() => null);
+            
             
         }
-        this._requestData2(this._responseHandler2.bind(this));
-        console.log(this.state.featureCollection);
-    }
-
-    _reponseHandler(err,response){
-        if(err){
-            consoler.error("Error while request Icon Data");
-        }
-        var features = JSON.parse(response.response).features;
         this.setState({
-            data : features
+            data : this.state.featureCollection.features
         });
+        this.onDeviceListUpdated(this.state.featureCollection);
     }
 
     componentWillUnmount(){
         var deviceListLength = this.deviceList.length;
         var i = 0;
         for(;i<deviceListLength;i++){
-            this.websocket.unsubscribe(this.deviceList.id);
+            this.websocket.unsubscribe(this.deviceList[i].name);
         }
-        
+        this.setState({
+            popupLatLng : null
+        });   
     }
 
     _onItemHover(item){
-        //console.log('Icon Item Hovered');
         var {viewport} = this.props;
         const z = Math.floor(viewport.zoom);
         var x = item.object && item.object.zoomLevels[z].points;
@@ -165,13 +151,10 @@ export default class IconMapComponent extends Component {
            this.lastHovered = item.object.properties.id;
            this.showToolTip(item);
         }
-        
-        //console.log('Length: ' + (x ? x.length : 0));
-        
     }
 
     hideToolTip(){
-        console.log('Hide Tooltip');
+        this.onPopupHide();
     }
 
     showToolTip(item){
@@ -188,29 +171,38 @@ export default class IconMapComponent extends Component {
         for(var i=0;i < items.length;i++){
             object.content.push(items[i].properties);
         }
-        this.onPopupShow(object);
-        console.log('Show Tooltip: ' + this.lastHovered.id);       
+        this.onPopupShow(object);   
     }
 
     _onItemClicked(item){
-        console.log('Icon Item Clicked');
     }
 
     render() {
         const {data,iconMapping,showCluster, popupLatLng} = this.state;
+        var {selectedDevice} = this.props;        
+        if(isNotNull(this.state.selectedDevice) && this.state.selectedDevice.device_id != selectedDevice.device_id){
+            console.log("UnSubscribing to: " + this.state.selectedDevice.device_id);
+            this.websocket.unsubscribe(this.state.selectedDevice.device_id);
+        }
+        this.state.selectedDevice = selectedDevice;
+        if(isNotNull(this.state.selectedDevice)){
+            console.log("Subscribing to: " + this.state.selectedDevice.device_id);
+            this.websocket.subscribe(this.state.selectedDevice.device_id);
+        }
         var {viewport} = this.props;
         return (
-            <TaxiRealtimeDataIconOverlay
-                viewport={viewport}
-                data={data}
-                iconAtlas="../assets/img/location-icon-atlas.png"
-                iconMapping={iconMapping}
-                showCluster={showCluster}
-                onHover={this._onItemHover.bind(this)}
-                onClick={this._onItemClicked.bind(this)}
-            >
-            
-            </TaxiRealtimeDataIconOverlay>
+            <div>
+                <TaxiRealtimeDataIconOverlay
+                    viewport={viewport}
+                    data={data}
+                    iconAtlas="../assets/img/location-icon-atlas.png"
+                    iconMapping={iconMapping}
+                    showCluster={showCluster}
+                    onHover={this._onItemHover.bind(this)}
+                    onClick={this._onItemClicked.bind(this)}
+                >            
+                </TaxiRealtimeDataIconOverlay>
+            </div>
         );
     }
 

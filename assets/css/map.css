@@ -3,10 +3,34 @@
     margin-top: 30px;
     right: 40px;
     z-index:100;
-    width: 25%;        
-    border-radius: 20px;
-    border: 1px solid #f1f1f1;
-    min-height: 40%;
+    width: 270px;
+    min-width: 350px;
+    min-height: 455px;
+    height: 50%;
+    max-height: 70%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.infobox-header-container {
+    position: fixed;
+    background-color: #4A5763;
+    width: inherit;
+    max-width: inherit;
+    min-width: inherit;
+    z-index: 100;
+    padding: 10px;
+    text-align: center;
+}
+
+.ant-badge-status-text {
+    color: white !important;
+    font-size: 20px !important;
+}
+
+.ant-badge-status-dot{
+    width: 20px !important;
+    height: 20px !important;
 }
 
 .dark-p1-bg{
@@ -23,10 +47,20 @@
 }
 
 .infobox-divider {
-    margin-left: 10%;
-    margin-right: 10%;
+    margin-left: 5%;
+    margin-right: 5%;
+    margin-top : 55px;
     background-color: #ffffff;
-    height: 3px;
+    height: 1px;
+}
+
+.infobox-widget tr:hover {
+    background-color: #598b8b;
+    font-weight: bold;
+}
+
+.infobox-widget tr > td:first-child{
+    width: 140px;
 }
 
 .infobox-divider-ontop{

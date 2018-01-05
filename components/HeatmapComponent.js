@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import SO2LevelOverlay from './SO2LevelOverlay';
-import { config } from 'luma.gl/dist/packages/math/src/common';
 
 export default class HeatmapComponent extends Component {
 
@@ -40,7 +39,6 @@ export default class HeatmapComponent extends Component {
 
     componentWillUnmount(){
         var visibility = this.state.map && this.state.map.getLayoutProperty('earthquakes-heat','visibility');
-        console.log(visibility);
         if (visibility === 'visible') {
             this.state.map.setLayoutProperty('earthquakes-heat', 'visibility', 'none');
         }
